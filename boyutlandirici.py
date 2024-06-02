@@ -51,10 +51,14 @@ def resize_images():
     for file_name in file_list:
         file_path = os.path.join(folder_path, file_name)
         if file_name.endswith('.jpg') or file_name.endswith('.jpeg') or file_name.endswith('.png'):
-            image = Image.open(file_path)
-            resized_image = image.resize((width, height))
-            output_path = os.path.join(output_folder, file_name)
-            resized_image.save(output_path)
+            try:
+                image = Image.open(file_path)
+                image = image.convert("RGB")  # Görüntüyü RGB moduna dönüştür
+                resized_image = image.resize((width, height), Image.ANTIALIAS)
+                output_path = os.path.join(output_folder, file_name)
+                resized_image.save(output_path, "JPEG")
+            except Exception as e:
+                print(f"Error processing image {file_path}: {e}")
 
     messagebox.showinfo("Başarılı", "Tüm görüntüler yeniden boyutlandırıldı ve kaydedildi.")
     result_label.config(text="Tüm görüntüler yeniden boyutlandırıldı ve kaydedildi.")
@@ -64,11 +68,9 @@ def resize_images():
     average_size_label.config(text="")
 
 
-
 root = Tk()
 root.title("Görüntü Yeniden Boyutlandırma")
 root.geometry("400x350")
-
 
 label = Label(root, text="Görüntüleri Yeniden Boyutlandır")
 label.pack(pady=10)
